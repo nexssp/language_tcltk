@@ -1,0 +1,11 @@
+# vim: ft=tcl ts=4 sw=4 expandtab:
+
+tcltest::test quit-1.1 {quit} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    $r quit
+    $r -sync ping
+} -result {Disconnected} -returnCodes {error}
+

@@ -1,0 +1,101 @@
+# vim: ft=tcl ts=4 sw=4 expandtab:
+
+tcltest::loadTestedCommands
+
+tcltest::test connect-1.1 {connect when already connected} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    $r connect
+} -cleanup {
+    $r destroy
+} -returnCodes {
+    error
+} -result {Already connected}
+
+tcltest::test connect-1.2 {connect after disconnect} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    $r disconnect
+    $r connect
+} -cleanup {
+    $r destroy
+}
+
+tcltest::test connect-1.3 {connected says 1} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    $r connected
+} -cleanup {
+    $r destroy
+} -result {1}
+
+tcltest::test connect-1.4 {connect from disconnected} -constraints {
+    serverIsRunning
+} -body {
+    set r [retcl new -noconnect]
+    $r connect
+    $r connected
+} -cleanup {
+    $r destroy
+} -result 1
+
+tcltest::test connect-1.5 {reconnect from disconnected} -constraints {
+    serverIsRunning
+} -body {
+    set r [retcl new -noconnect]
+    $r reconnect
+    $r connected
+} -cleanup {
+    $r destroy
+} -result 1
+
+tcltest::test connect-1.6 {reconnect failure} -constraints {
+    serverIsRunning
+} -body {
+    set result [list]
+    set r [retcl new]
+    lappend result [$r connected]
+    stopServer
+    $r errorHandler [list apply {{ns msg} {
+            lappend ${ns}::result $msg
+        }} [namespace current]]
+    $r reconnect
+    vwait result
+    lappend result [$r connected]
+} -cleanup {
+    startServer
+    $r destroy
+} -result {1 {Could not reconnect to Redis server} 0}
+
+tcltest::test connect-1.7 {reconnect success} -constraints {
+    serverIsRunning
+} -body {
+    set result [list]
+    set r [retcl new]
+    lappend result [$r connected]
+    stopServer
+    $r errorHandler [list apply {{ns msg} {
+            lappend ${ns}::result $msg
+        }} [namespace current]]
+    $r reconnect
+    after 1500 { startServer }
+    set check [list apply {{ns r} {
+            if {[$r connected]} {
+                lappend ${ns}::result reconnected
+            } else {
+                namespace upvar $ns check check
+                after 100 $check
+            }
+        }} [namespace current] $r]
+    after 100 $check
+    vwait result
+    lappend result [$r connected]
+} -cleanup {
+    $r destroy
+} -result {1 reconnected 1}

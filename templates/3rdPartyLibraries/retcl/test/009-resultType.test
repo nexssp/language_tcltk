@@ -1,0 +1,29 @@
+# vim: ft=tcl ts=4 sw=4 expandtab:
+
+tcltest::loadTestedCommands
+
+tcltest::test resultType-1.1 {set is simple string} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    set res [$r set a 12]
+    runEvents
+    $r resultType $res
+} -cleanup {
+    $r del 12
+    $r destroy
+} -result {SimpleString}
+
+tcltest::test resultType-1.2 {set with two params is an error} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    set res [$r set a 12 13]
+    runEvents
+    $r resultType $res
+} -cleanup {
+    $r del 12
+    $r destroy
+} -result {Error}

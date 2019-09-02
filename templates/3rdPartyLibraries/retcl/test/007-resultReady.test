@@ -1,0 +1,25 @@
+# vim: ft=tcl ts=4 sw=4 expandtab:
+
+tcltest::loadTestedCommands
+
+tcltest::test resultReady-1.1 {resultReady not yet} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    $r resultReady [$r PING]
+} -cleanup {
+    $r destroy
+} -result {0}
+
+tcltest::test resultReady-1.2 {resultReady after event loop} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    set res [$r PING]
+    runEvents
+    $r resultReady $res
+} -cleanup {
+    $r destroy
+} -result {1}

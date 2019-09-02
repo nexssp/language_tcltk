@@ -1,0 +1,34 @@
+##
+# The pub/sub example from README.md
+#
+
+# tcl::tm::path add 3rdPartyLibraries/retcl.tm
+# package require retcl
+
+source 3rdPartyLibraries/retcl/retcl.tm
+
+set forever 0
+
+proc mycallback {obj registrationTime type pattern channel message} {
+    set elapsed [expr {[clock seconds] - $registrationTime}]
+    puts "After $elapsed seconds I got a message of type $type"
+    puts "on my registration channel $pattern."
+    puts "The actual channel was $channel. The message is $message."
+
+    if {$type eq {pmessage}} {
+        $obj destroy
+        set ::forever 1
+    }
+}
+
+set r [retcl new]
+$r callback foo [list mycallback $r [clock seconds]]
+$r PSUBSCRIBE foo
+
+after 3000 {
+    retcl create r2
+    r2 -sync PUBLISH foo Mytest
+    r2 destroy
+}
+
+vwait forever

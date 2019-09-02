@@ -1,0 +1,42 @@
+# vim: ft=tcl ts=4 sw=4 expandtab:
+
+tcltest::loadTestedCommands
+
+tcltest::test pipeline-1.1 {simple pipeline} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    proc cb {varName args} {
+        set $varName 1
+    }
+    set done 0
+    $r pipeline {
+        $r set a 23
+        $r get a
+        $r set a 25
+        $r get a
+        $r set a 27
+        $r get a
+    }
+    runEvents
+    $r allResults
+} -cleanup {
+    $r destroy
+} -result {rds:1 OK rds:1:type SimpleString rds:2 23 rds:2:type BulkString rds:3 OK rds:3:type SimpleString rds:4 25 rds:4:type BulkString rds:5 OK rds:5:type SimpleString rds:6 27 rds:6:type BulkString}
+
+# https://github.com/gahr/retcl/issues/5
+tcltest::test pipeline-1.2 {pipeline not dismantled on error} -constraints {
+    serverIsRunning
+} -setup {
+    set r [retcl new]
+} -body {
+    set res {}
+    catch { $r pipeline { error failure! } } res
+    $r pipeline {
+        append res ok!
+    }
+    set res
+} -cleanup {
+    $r destroy
+} -result {failure!ok!}
