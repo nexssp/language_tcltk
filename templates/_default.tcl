@@ -1,34 +1,22 @@
 #!/usr/bin/tclsh
+# TCL/TK Nexss PROGRAMMER 2.0
+# Default for JSON data
 
-#https://github.com/dbohdan/jimhttp
+# json needs TCLib https://core.tcl.tk/tcllib/zip/tcllib-trunk.zip?uuid=trunk
+# install: nexss install.tcl
+package require json 
+source src/3rdPartyLibraries/tcl2json/tcl2json.tcl
 
-source 3rdPartyLibraries/jimhttp/json.tcl
+set NexssStdin [gets stdin]
+# puts "$line"
 
-# while {[gets stdin line] >= 0} {
-#     # do what you like here
-#     # puts "$line"
+set ParsedJSON [json::json2dict $NexssStdin]
 
+# READ data
+# puts [dict get $ParsedJSON start]
 
-#     # 
-# }
+# MODIFY data
+dict set ParsedJSON test test
 
-set line [gets stdin]
-puts "$line"
-set x [::json::parse "$line"]
-parray $x
-set $x{x} 1000
-puts [::json::stringify2 $x]
-
-# puts [::json::stringify {
-#     a 123
-#     b 123
-#     c {123 456}
-#     d true
-#     e true
-# } 0 {
-#     a string
-#     c {N* number}
-#     d string
-# }]
-
-
+# FIXME: [] is replaced by "" on stringify2
+puts [tcl2json $ParsedJSON]

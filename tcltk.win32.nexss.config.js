@@ -27,8 +27,8 @@ languageConfig.builders = {
 };
 languageConfig.compilers = {
   git: {
+    //TCL/TK is in the git installation
     install: "scoop install git",
-    // Cpp does not have possibility to compile and run on the fly. We need to save it as a exe file first.
     command: "tclsh",
     args: "<file>",
     help: ``
@@ -53,7 +53,7 @@ languageConfig.languagePackageManagers = {
     // run directly on package manager
     else: "teacup <default> <args>"
   },
-  npm: {
+  teacup: {
     installation: "See how to install teacup",
     messageAfterInstallation: null, // sometimes there is need of add something to the files can be add here eg php for composer.
     installed: "teacup list <args>",
