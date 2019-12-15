@@ -1,5 +1,9 @@
 # Readme
 
+## Important info
+
+This was only tested on Windows. Builders (TO EXE) functions are still to be validated. Package Managers needs to be added (fossil and teacup ?)
+
 ## Manual Installation / Troubleshooting
 
 If from any reason you are unable to use tcl/tk with nexss please try install it manually:

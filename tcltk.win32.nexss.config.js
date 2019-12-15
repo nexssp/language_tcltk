@@ -5,10 +5,11 @@ Tk is a graphical user interface toolkit that takes developing desktop applicati
 languageConfig.url = "https://www.tcl.tk/";
 languageConfig.extensions = [".tcl"];
 languageConfig.executeCommandLine = "tclsh -e";
-languageConfig.printCommandLine = "tclsh -p"; //no console.log() needed to display result eg node -p "4+6"
+languageConfig.printCommandLine = "tclsh -p";
 languageConfig.checkSyntax = "tclsh -c";
 languageConfig.interactiveShell = "tclsh";
 languageConfig.builders = {
+  // FIXME: This doesnt work. Exe file is not created properly
   freeWrap: {
     install: "installed",
     cmd: __dirname + "/builder/freewrap/win64/freewrap.exe", //https://wiki.tcl-lang.org/page/Deploying+With+Freewrap
@@ -38,36 +39,37 @@ languageConfig.errors = require("./nexss.tcltk.errors");
 languageConfig.languagePackageManagers = {
   fossil: {
     // https://wiki.tcl-lang.org/page/Fossil
+    // FIXME: To make fossil commands
     installation: "scoop install fossil",
     messageAfterInstallation: null, // sometimes there is need of add something to the files can be add here eg php for composer.
-    installed: "teacup list <args>",
-    search: "teacup search <args>",
-    install: "teacup install <args>",
-    uninstall: "teacup remove <args>",
-    help: "teacup help <args>",
-    version: "teacup --version",
+    installed: "fossil list",
+    search: "fossil search",
+    install: "fossil install",
+    uninstall: "fossil remove",
+    help: "fossil help",
+    version: "fossil --version",
     init: () => {
       //see on node js how to make function here
     },
     // if command not found in specification
     // run directly on package manager
-    else: "teacup <default> <args>"
+    else: "fossil"
   },
   teacup: {
-    installation: "See how to install teacup",
+    installation: "See how to install teacup?", //FIXME: teacup installation
     messageAfterInstallation: null, // sometimes there is need of add something to the files can be add here eg php for composer.
-    installed: "teacup list <args>",
-    search: "teacup search <args>",
-    install: "teacup install <args>",
-    uninstall: "teacup remove <args>",
-    help: "teacup help <args>",
+    installed: "teacup list",
+    search: "teacup search",
+    install: "teacup install",
+    uninstall: "teacup remove",
+    help: "teacup help",
     version: "teacup --version",
     init: () => {
-      //see on node js how to make function here
+      //see on node js language how to make function here
     },
     // if command not found in specification
     // run directly on package manager
-    else: "teacup <default> <args>"
+    else: "teacup"
   }
 };
 
