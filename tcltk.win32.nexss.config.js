@@ -9,10 +9,13 @@ languageConfig.printCommandLine = "tclsh -p";
 languageConfig.checkSyntax = "tclsh -c";
 languageConfig.interactiveShell = "tclsh";
 languageConfig.builders = {
-  // FIXME: This doesnt work. Exe file is not created properly
   freeWrap: {
-    install: "installed",
+    install:
+      "Builder is installed with the package. [USER_HOME_PATH]/.nexss/languages/[Language]/",
+    // Below is used to check if the builder exists.
     cmd: __dirname + "/builder/freewrap/win64/freewrap.exe", //https://wiki.tcl-lang.org/page/Deploying+With+Freewrap
+
+    // build: is for building so it can be used to make many other tasks.
     build: () => {
       require("path").join(
         __dirname,
@@ -26,14 +29,35 @@ languageConfig.builders = {
     help: ``
   }
 };
+
+function isOSWin64() {
+  return (
+    process.arch === "x64" ||
+    process.env.hasOwnProperty("PROCESSOR_ARCHITEW6432")
+  );
+}
+let installTclTkFile;
+if (isOSWin64()) {
+  installTclTkFile = "tcl-8.6.10-installer-1.10.0-x64.msi";
+} else {
+  installTclTkFile = "tcl-8.6.10-installer-1.10.0-x86.msi";
+}
+
 languageConfig.compilers = {
-  git: {
-    //TCL/TK is in the git installation
-    install: "scoop install git",
+  magicsplat: {
+    //magicsplat
+    install: `echo Warning! You may need to restart your terminal after installation. && ${__dirname}/install/${installTclTkFile}`,
     command: "tclsh",
     args: "<file>",
     help: ``
   }
+  // git: { // This does not work on Poweshell, only cmder
+  //   //TCL/TK is in the git installation
+  //   install: "scoop install git",
+  //   command: "tclsh",
+  //   args: "<file>",
+  //   help: ``
+  // }
 };
 languageConfig.errors = require("./nexss.tcltk.errors");
 languageConfig.languagePackageManagers = {

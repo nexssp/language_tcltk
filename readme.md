@@ -1,5 +1,7 @@
 # Readme
 
+For compiling tcl/tk we use https://www.magicsplat.com/tcl-installer/index.html which is automatically installed.
+
 ## Important info
 
 This was only tested on Windows. Builders (TO EXE) functions are still to be validated. Package Managers needs to be added (fossil and teacup ?)
