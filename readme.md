@@ -1,6 +1,6 @@
-# Readme
+# TCL/TK Implementation for Nexss Programmer
 
-For compiling tcl/tk we use https://www.magicsplat.com/tcl-installer/index.html which is automatically installed.
+For compiling tcl/tk we use https://www.magicsplat.com/tcl-installer/index.html which is automatically installed by Nexss Programmer.
 
 ## Important info
 
