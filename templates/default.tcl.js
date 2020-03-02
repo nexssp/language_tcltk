@@ -1,7 +1,7 @@
 // additional info for templates like copy extra libraries.
 // in this case library needs JSON
 const config = {
-  files: ["3rdPartyLibraries/tcl2json/tcl2json.tcl"],
+  files: ["3rdPartyLibraries/jimhttp/json.tcl"],
   commands: [""],
   repos: ["https://rosettacode.org/wiki/JSON#Tcl"],
   descriptions: [

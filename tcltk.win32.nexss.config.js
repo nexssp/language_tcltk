@@ -30,23 +30,10 @@ languageConfig.builders = {
   }
 };
 
-function isOSWin64() {
-  return (
-    process.arch === "x64" ||
-    process.env.hasOwnProperty("PROCESSOR_ARCHITEW6432")
-  );
-}
-let installTclTkFile;
-if (isOSWin64()) {
-  installTclTkFile = "tcl-8.6.10-installer-1.10.0-x64.msi";
-} else {
-  installTclTkFile = "tcl-8.6.10-installer-1.10.0-x86.msi";
-}
-
 languageConfig.compilers = {
   magicsplat: {
     //magicsplat
-    install: `echo Warning! You may need to restart your terminal after installation. && ${__dirname}/install/${installTclTkFile}`,
+    install: `nexss install/TclTk-MagicSplat`,
     command: "tclsh",
     args: "<file>",
     help: ``
