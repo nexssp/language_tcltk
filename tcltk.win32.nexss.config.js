@@ -3,6 +3,9 @@ languageConfig.title = "TCL/TK";
 languageConfig.description = `Tcl (Tool Command Language) is a very powerful but easy to learn dynamic programming language, suitable for a very wide range of uses, including web and desktop applications, networking, administration, testing and many more.
 Tk is a graphical user interface toolkit that takes developing desktop applications to a higher level than conventional approaches.`;
 languageConfig.url = "https://www.tcl.tk/";
+languageConfig.founders = ["John Ousterhout"];
+languageConfig.developers = ["TCL Core Team"];
+languageConfig.years = ["1988"];
 languageConfig.extensions = [".tcl"];
 languageConfig.executeCommandLine = "tclsh -e";
 languageConfig.printCommandLine = "tclsh -p";
