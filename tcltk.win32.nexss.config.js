@@ -1,4 +1,4 @@
-let languageConfig = Object.assign({}, require("../config.win32"));
+let languageConfig = Object.assign({}, require(`../config.${platform}`));
 languageConfig.title = "TCL/TK";
 languageConfig.description = `Tcl (Tool Command Language) is a very powerful but easy to learn dynamic programming language, suitable for a very wide range of uses, including web and desktop applications, networking, administration, testing and many more.
 Tk is a graphical user interface toolkit that takes developing desktop applications to a higher level than conventional approaches.`;
@@ -29,8 +29,8 @@ languageConfig.builders = {
       );
     }, // "pkg --output <destinationFile> --out-path <destinationPath> <file>",
     args: "<file> -o <destinationFile> ",
-    help: ``
-  }
+    help: ``,
+  },
 };
 
 languageConfig.compilers = {
@@ -39,8 +39,8 @@ languageConfig.compilers = {
     install: `nexss install/TclTk-MagicSplat`,
     command: "tclsh",
     args: "<file>",
-    help: ``
-  }
+    help: ``,
+  },
   // git: { // This does not work on Poweshell, only cmder
   //   //TCL/TK is in the git installation
   //   install: "scoop install git",
@@ -67,7 +67,7 @@ languageConfig.languagePackageManagers = {
     },
     // if command not found in specification
     // run directly on package manager
-    else: "fossil"
+    else: "fossil",
   },
   teacup: {
     installation: "See how to install teacup?", //FIXME: teacup installation
@@ -83,8 +83,8 @@ languageConfig.languagePackageManagers = {
     },
     // if command not found in specification
     // run directly on package manager
-    else: "teacup"
-  }
+    else: "teacup",
+  },
 };
 
 module.exports = languageConfig;
