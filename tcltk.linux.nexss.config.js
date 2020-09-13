@@ -8,7 +8,7 @@ if (process.getuid && process.getuid() === 0) {
 languageConfig.builders = {}; // See Win32 version for field details how to setup
 languageConfig.compilers = {
   apt: {
-    install: `${sudo}apt install -y tcl tk tcllib`,
+    install: `${sudo}apt install -y tcl tk tcllib cmake wget`,
     command: "tclsh",
     args: "<file>",
     help: ``,
@@ -21,7 +21,7 @@ const {
 } = require(`${process.env.NEXSS_SRC_PATH}/lib/osys`);
 
 const distName = dist();
-
+languageConfig.dist = distName;
 switch (distName) {
   case "Arch Linux":
     languageConfig.compilers.apt.install = `${sudo}pacman -Syy
@@ -52,6 +52,33 @@ tclsh installer.tcl -no-gui -no-wait`;
   // ${sudo} dnf install compat-openssl10
   // ${sudo} dnf install -y powershell`;
   //       break;
+  case "CentOS Linux":
+    languageConfig.compilers.apt.install = `yum install -y cmake wget
+wget https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz
+tar zxf tcl8.6.10-src.tar.gz
+cd tcl8.6.10/unix
+.configure
+make
+make install
+cd ../../
+wget https://prdownloads.sourceforge.net/tcl/tk8.6.10-src.tar.gz
+tar zxf tk8.6.10-src.tar.gz
+cd tk8.6.10/unix
+./configure --with-tcl="$(pwd)/../../tcl8.6.10/unix"
+make
+make install`;
+    break;
+  case "Alpine Linux":
+    languageConfig.compilers.apt.install =
+      replaceCommandByDist(
+        languageConfig.compilers.apt.install.replace(" tcllib", "") //No tclib
+      ) +
+      `\nwget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
+tar zxf tcllib-1.20.tar.gz
+rm tcllib-1.20.tar.gz
+cd tcllib-1.20
+tclsh installer.tcl -no-gui -no-wait`;
+    break;
   default:
     languageConfig.compilers.apt.install = replaceCommandByDist(
       languageConfig.compilers.apt.install
