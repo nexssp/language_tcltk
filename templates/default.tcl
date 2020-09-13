@@ -1,5 +1,6 @@
 #!/usr/bin/tclsh
-set ::env(LANG) en_US.UTF-8
+encoding system utf-8
+# set ::env(LANG) en_US.UTF-8
 # TCL/TK Nexss PROGRAMMER 2.0
 # Default for JSON data
 package require json 
