@@ -23,9 +23,22 @@ const {
 const distName = dist();
 languageConfig.dist = distName;
 switch (distName) {
+  case "Amazon Linux":
+    languageConfig.compilers.apt.install = replaceCommandByDist(
+      languageConfig.compilers.apt.install +
+        `
+wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
+tar zxf tcllib-1.20.tar.gz
+rm tcllib-1.20.tar.gz
+cd tcllib-1.20
+tclsh installer.tcl -no-gui -no-wait`
+    );
+    // case "Alpine Linux":
+    //   languageConfig.compilers.apt.install = ``;
+    break;
   case "Arch Linux":
     languageConfig.compilers.apt.install = `${sudo}pacman -Syy
-${sudo}pacman -S --noconfirm tcl tk
+${sudo}pacman -S --noconfirm wget tcl tk
 ${sudo}pacman -Scc --noconfirm
 wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
 tar zxf tcllib-1.20.tar.gz
