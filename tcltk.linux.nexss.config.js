@@ -28,9 +28,11 @@ switch (distName) {
       languageConfig.compilers.apt.install +
         `
 wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
+echo Unpacking tcllib..
 tar zxf tcllib-1.20.tar.gz
 rm tcllib-1.20.tar.gz
 cd tcllib-1.20
+echo Installing tclib
 tclsh installer.tcl -no-gui -no-wait`
     );
     // case "Alpine Linux":
