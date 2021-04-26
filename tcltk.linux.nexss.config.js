@@ -1,9 +1,6 @@
 let languageConfig = Object.assign({}, require("./tcltk.win32.nexss.config"));
 
-let sudo = "sudo ";
-if (process.getuid && process.getuid() === 0) {
-  sudo = "";
-}
+let sudo = process.sudo;
 
 languageConfig.builders = {}; // See Win32 version for field details how to setup
 languageConfig.compilers = {
@@ -15,16 +12,11 @@ languageConfig.compilers = {
   },
 };
 
-const {
-  replaceCommandByDist,
-  dist,
-} = require(`${process.env.NEXSS_SRC_PATH}/lib/osys`);
-
-const distName = dist();
+const distName = process.distro;
 languageConfig.dist = distName;
 switch (distName) {
   case "Amazon Linux":
-    languageConfig.compilers.apt.install = replaceCommandByDist(
+    languageConfig.compilers.apt.install = process.replacePMByDistro(
       languageConfig.compilers.apt.install +
         `
 wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
@@ -85,7 +77,7 @@ make install`;
     break;
   case "Alpine Linux":
     languageConfig.compilers.apt.install =
-      replaceCommandByDist(
+      process.replacePMByDistro(
         languageConfig.compilers.apt.install.replace(" tcllib", "") //No tclib
       ) +
       `\nwget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
@@ -95,7 +87,7 @@ cd tcllib-1.20
 tclsh installer.tcl -no-gui -no-wait`;
     break;
   default:
-    languageConfig.compilers.apt.install = replaceCommandByDist(
+    languageConfig.compilers.apt.install = process.replacePMByDistro(
       languageConfig.compilers.apt.install
     );
     break;
