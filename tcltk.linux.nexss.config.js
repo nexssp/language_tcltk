@@ -4,7 +4,13 @@ let sudo = process.sudo;
 
 languageConfig.builders = {}; // See Win32 version for field details how to setup
 languageConfig.compilers = {
-  apt: {
+  tcl86: {
+    install: `${sudo}apt install -y tcl tcllib cmake wget`,
+    command: "tclsh",
+    args: "<file>",
+    help: ``,
+  },
+  tcltk86: {
     install: `${sudo}apt install -y tcl tk tcllib cmake wget`,
     command: "tclsh",
     args: "<file>",
@@ -15,23 +21,34 @@ languageConfig.compilers = {
 const distName = process.distro;
 languageConfig.dist = distName;
 switch (distName) {
-  case "Amazon Linux":
-    languageConfig.compilers.apt.install = process.replacePMByDistro(
-      languageConfig.compilers.apt.install +
-        `
+  case process.distros.AMAZON:
+    const tcllibInstall = `
 wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
 echo Unpacking tcllib..
 tar zxf tcllib-1.20.tar.gz
 rm tcllib-1.20.tar.gz
 cd tcllib-1.20
 echo Installing tclib
-tclsh installer.tcl -no-gui -no-wait`
+tclsh installer.tcl -no-gui -no-wait`;
+    languageConfig.compilers.tcl86.install = process.replacePMByDistro(
+      languageConfig.compilers.tcl86.install + tcllibInstall
     );
-    // case "Alpine Linux":
-    //   languageConfig.compilers.apt.install = ``;
+
+    languageConfig.compilers.tcltk86.install = process.replacePMByDistro(
+      languageConfig.compilers.tcltk86.install + tcllibInstall
+    );
+
     break;
-  case "Arch Linux":
-    languageConfig.compilers.apt.install = `${sudo}pacman -Syy
+  case process.distros.ARCH:
+    languageConfig.compilers.tcl86.install = `${sudo}pacman -Syy
+${sudo}pacman -S --noconfirm wget tcl
+${sudo}pacman -Scc --noconfirm
+wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
+tar zxf tcllib-1.20.tar.gz
+rm tcllib-1.20.tar.gz
+cd tcllib-1.20
+tclsh installer.tcl -no-gui -no-wait`;
+    languageConfig.compilers.tcltk86.install = `${sudo}pacman -Syy
 ${sudo}pacman -S --noconfirm wget tcl tk
 ${sudo}pacman -Scc --noconfirm
 wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
@@ -39,6 +56,10 @@ tar zxf tcllib-1.20.tar.gz
 rm tcllib-1.20.tar.gz
 cd tcllib-1.20
 tclsh installer.tcl -no-gui -no-wait`;
+    languageConfig.compilers.tcl86.install = languageConfig.compilers.tcltk86.install.replace(
+      "tcl tk",
+      "tcl"
+    );
     // case "Alpine Linux":
     //   languageConfig.compilers.apt.install = ``;
     break;
@@ -59,8 +80,15 @@ tclsh installer.tcl -no-gui -no-wait`;
   // ${sudo} dnf install compat-openssl10
   // ${sudo} dnf install -y powershell`;
   //       break;
-  case "CentOS Linux":
-    languageConfig.compilers.apt.install = `yum install -y cmake wget
+  case process.distros.CENTOS:
+    languageConfig.compilers.tcl86.install = `yum install -y cmake wget
+wget https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz
+tar zxf tcl8.6.10-src.tar.gz
+cd tcl8.6.10/unix
+.configure
+make
+make install`;
+    languageConfig.compilers.tcltk86.install = `yum install -y cmake wget
 wget https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz
 tar zxf tcl8.6.10-src.tar.gz
 cd tcl8.6.10/unix
@@ -75,10 +103,21 @@ cd tk8.6.10/unix
 make
 make install`;
     break;
-  case "Alpine Linux":
-    languageConfig.compilers.apt.install =
+  case process.distros.ALPINE:
+    languageConfig.compilers.tcltk86.install =
       process.replacePMByDistro(
-        languageConfig.compilers.apt.install.replace(" tcllib", "") //No tclib
+        languageConfig.compilers.tcl86.install
+          .replace(" tcllib", "") //No tclib
+          .replace("tcl tk", "tcl")
+      ) +
+      `\nwget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
+tar zxf tcllib-1.20.tar.gz
+rm tcllib-1.20.tar.gz
+cd tcllib-1.20
+tclsh installer.tcl -no-gui -no-wait`;
+    languageConfig.compilers.tcl86.install =
+      process.replacePMByDistro(
+        languageConfig.compilers.tcl86.install.replace(" tcllib", "") //No tclib
       ) +
       `\nwget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
 tar zxf tcllib-1.20.tar.gz
@@ -87,8 +126,11 @@ cd tcllib-1.20
 tclsh installer.tcl -no-gui -no-wait`;
     break;
   default:
-    languageConfig.compilers.apt.install = process.replacePMByDistro(
-      languageConfig.compilers.apt.install
+    languageConfig.compilers.tcl86.install = process.replacePMByDistro(
+      languageConfig.compilers.tcl86.install
+    );
+    languageConfig.compilers.tcltk86.install = process.replacePMByDistro(
+      languageConfig.compilers.tcltk86.install
     );
     break;
 }
