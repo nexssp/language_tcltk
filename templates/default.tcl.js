@@ -7,7 +7,7 @@ if (process.platform !== "win32") {
       break;
     default:
       const { tclLibCustomInstall } = require("./../tcltk_installs");
-      install = tclLibCustomInstall();
+      install = process.replacePMByDistro(tclLibCustomInstall());
   }
 }
 
