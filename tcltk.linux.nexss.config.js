@@ -21,16 +21,16 @@ languageConfig.compilers = {
 const distName = process.distro;
 languageConfig.dist = distName;
 switch (distName) {
-  case process.distros.AMAZON:
-    languageConfig.compilers.tcl86.install = process.replacePMByDistro(
-      languageConfig.compilers.tcl86.install + tclLibCustomInstall()
-    );
+  // case process.distros.AMAZON:
+  //   languageConfig.compilers.tcl86.install = process.replacePMByDistro(
+  //     languageConfig.compilers.tcl86.install + tclLibCustomInstall()
+  //   );
 
-    languageConfig.compilers.tcltk86.install = process.replacePMByDistro(
-      languageConfig.compilers.tcltk86.install + tclLibCustomInstall()
-    );
+  //   languageConfig.compilers.tcltk86.install = process.replacePMByDistro(
+  //     languageConfig.compilers.tcltk86.install + tclLibCustomInstall()
+  //   );
 
-    break;
+  //   break;
   case process.distros.ARCH:
     languageConfig.compilers.tcl86.install =
       `${sudo}pacman -Syy
@@ -67,6 +67,7 @@ ${sudo}pacman -Scc --noconfirm
   // ${sudo} dnf install -y powershell`;
   //       break;
   case process.distros.ORACLE:
+  case process.distros.AMAZON:
   case process.distros.CENTOS:
     languageConfig.compilers.tcl86.install =
       `yum install -y cmake curl gcc make
