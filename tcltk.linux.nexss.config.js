@@ -1,5 +1,5 @@
 let languageConfig = Object.assign({}, require("./tcltk.win32.nexss.config"));
-
+const { tclLibCustomInstall } = require("./tcltk_installs");
 let sudo = process.sudo;
 
 languageConfig.builders = {}; // See Win32 version for field details how to setup
@@ -22,40 +22,26 @@ const distName = process.distro;
 languageConfig.dist = distName;
 switch (distName) {
   case process.distros.AMAZON:
-    const tcllibInstall = `
-wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
-echo Unpacking tcllib..
-tar zxf tcllib-1.20.tar.gz
-rm tcllib-1.20.tar.gz
-cd tcllib-1.20
-echo Installing tclib
-tclsh installer.tcl -no-gui -no-wait`;
     languageConfig.compilers.tcl86.install = process.replacePMByDistro(
-      languageConfig.compilers.tcl86.install + tcllibInstall
+      languageConfig.compilers.tcl86.install + tclLibCustomInstall()
     );
 
     languageConfig.compilers.tcltk86.install = process.replacePMByDistro(
-      languageConfig.compilers.tcltk86.install + tcllibInstall
+      languageConfig.compilers.tcltk86.install + tclLibCustomInstall()
     );
 
     break;
   case process.distros.ARCH:
-    languageConfig.compilers.tcl86.install = `${sudo}pacman -Syy
+    languageConfig.compilers.tcl86.install =
+      `${sudo}pacman -Syy
 ${sudo}pacman -S --noconfirm wget tcl
 ${sudo}pacman -Scc --noconfirm
-wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
-tar zxf tcllib-1.20.tar.gz
-rm tcllib-1.20.tar.gz
-cd tcllib-1.20
-tclsh installer.tcl -no-gui -no-wait`;
-    languageConfig.compilers.tcltk86.install = `${sudo}pacman -Syy
+` + tclLibCustomInstall();
+    languageConfig.compilers.tcltk86.install =
+      `${sudo}pacman -Syy
 ${sudo}pacman -S --noconfirm wget tcl tk
 ${sudo}pacman -Scc --noconfirm
-wget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
-tar zxf tcllib-1.20.tar.gz
-rm tcllib-1.20.tar.gz
-cd tcllib-1.20
-tclsh installer.tcl -no-gui -no-wait`;
+` + tclLibCustomInstall();
     languageConfig.compilers.tcl86.install = languageConfig.compilers.tcltk86.install.replace(
       "tcl tk",
       "tcl"
@@ -80,19 +66,24 @@ tclsh installer.tcl -no-gui -no-wait`;
   // ${sudo} dnf install compat-openssl10
   // ${sudo} dnf install -y powershell`;
   //       break;
+  case process.distros.ORACLE:
   case process.distros.CENTOS:
-    languageConfig.compilers.tcl86.install = `yum install -y cmake wget
+    languageConfig.compilers.tcl86.install =
+      `yum install -y cmake curl gcc make
 wget https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz
 tar zxf tcl8.6.10-src.tar.gz
 cd tcl8.6.10/unix
-.configure
+./configure
 make
-make install`;
-    languageConfig.compilers.tcltk86.install = `yum install -y cmake wget
+make install
+cd ../../
+` + tclLibCustomInstall("tclsh8.6");
+    languageConfig.compilers.tcl86.command = "tclsh8.6";
+    languageConfig.compilers.tcltk86.install = `yum install -y cmake wget gcc make
 wget https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz
 tar zxf tcl8.6.10-src.tar.gz
 cd tcl8.6.10/unix
-.configure
+./configure
 make
 make install
 cd ../../
@@ -102,6 +93,7 @@ cd tk8.6.10/unix
 ./configure --with-tcl="$(pwd)/../../tcl8.6.10/unix"
 make
 make install`;
+    languageConfig.compilers.tcltk86.command = "tclsh8.6";
     break;
   case process.distros.ALPINE:
     languageConfig.compilers.tcltk86.install =
@@ -110,20 +102,16 @@ make install`;
           .replace(" tcllib", "") //No tclib
           .replace("tcl tk", "tcl")
       ) +
-      `\nwget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
-tar zxf tcllib-1.20.tar.gz
-rm tcllib-1.20.tar.gz
-cd tcllib-1.20
-tclsh installer.tcl -no-gui -no-wait`;
+      `
+` +
+      tclLibCustomInstall();
     languageConfig.compilers.tcl86.install =
       process.replacePMByDistro(
         languageConfig.compilers.tcl86.install.replace(" tcllib", "") //No tclib
       ) +
-      `\nwget https://core.tcl-lang.org/tcllib/uv/tcllib-1.20.tar.gz
-tar zxf tcllib-1.20.tar.gz
-rm tcllib-1.20.tar.gz
-cd tcllib-1.20
-tclsh installer.tcl -no-gui -no-wait`;
+      `
+` +
+      tclLibCustomInstall();
     break;
   default:
     languageConfig.compilers.tcl86.install = process.replacePMByDistro(
