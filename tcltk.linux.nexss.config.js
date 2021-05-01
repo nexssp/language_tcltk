@@ -68,6 +68,7 @@ ${sudo}pacman -Scc --noconfirm
   //       break;
   case process.distros.ORACLE:
   case process.distros.AMAZON:
+  case process.distros.AMAZON_AMI:
   case process.distros.CENTOS:
     languageConfig.compilers.tcl86.install =
       `yum install -y cmake curl gcc make
