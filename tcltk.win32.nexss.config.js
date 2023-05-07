@@ -39,7 +39,7 @@ languageConfig.builders = {
 languageConfig.compilers = {
   magicsplat: {
     //magicsplat
-    install: `nexss install/TclTk-MagicSplat`,
+    install: `nexss Install/tcltk-magicsplat.nexss`,
     command: "tclsh",
     args: "<file>",
     help: ``,
